@@ -459,14 +459,21 @@ function drawPractice(){
   const a=$('#qarea'); if(!a)return; const P=practice;
   if(!P.list.length){a.innerHTML=`<p class="empty">Nenhuma questão com esses filtros. Desmarque "Só as não respondidas" ou escolha outro tema.</p>`;return}
   const q=byId[P.list[P.i]];
-  a.innerHTML=qBlock(q,{sel:P.sel,reveal:P.done,num:P.i+1,total:P.list.length})+
+  if(P.cur!==q.id){P.cur=q.id;const pr=P.fresh?null:prog[q.id];P.sel=pr?pr.r:null;P.done=!!pr}
+  const feitas=P.list.filter(id=>prog[id]).length;
+  a.innerHTML=`<div class="qhead" style="margin-bottom:-6px"><span class="mono">${feitas} de ${P.list.length} respondidas nesta lista</span>${P.list.some(id=>!prog[id])?'<button class="btn g sm" id="pJump">Ir para a próxima não respondida</button>':''}</div>`+
+   qBlock(q,{sel:P.sel,reveal:P.done,num:P.i+1,total:P.list.length}).replace('<span class="tag">',prog[q.id]&&P.done?'<span class="tag e">Respondida</span> <span class="tag">':'<span class="tag">')+
    `<div class="qnav"><button class="btn g" id="pPrev" ${P.i===0?'disabled':''}>Anterior</button>
-    ${P.done?`<button class="btn n" id="pNext">${P.i<P.list.length-1?'Próxima questão':'Concluir'}</button>`:`<button class="btn y" id="pOk" ${P.sel==null?'disabled':''}>Responder</button>`}</div>`;
+    ${P.done?`<span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn g" id="pRedo">Refazer</button><button class="btn n" id="pNext">${P.i<P.list.length-1?'Próxima questão':'Concluir'}</button></span>`:`<span style="display:flex;gap:8px;flex-wrap:wrap">${P.i<P.list.length-1?'<button class="btn g" id="pSkip">Pular</button>':''}<button class="btn y" id="pOk" ${P.sel==null?'disabled':''}>Responder</button></span>`}</div>`;
   a.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{P.sel=+b.dataset.i;drawPractice()});
   if(P.done){const ok=P.sel===q.a;$('#fbx').innerHTML=`<div class="fb ${ok?'ok':'bad'}"><strong>${ok?'Correta.':'Incorreta. Gabarito: '+LET[q.a]}</strong><p>${esc(q.e)}</p></div>${pillAfter(q)}`}
   const pk=$('#pOk'); if(pk)pk.onclick=()=>{P.done=true;prog[q.id]={r:P.sel,ok:P.sel===q.a,t:Date.now()};touch();drawPractice();renderNav(location.hash.slice(1))};
-  const pn=$('#pNext'); if(pn)pn.onclick=()=>{if(P.i<P.list.length-1){P.i++;P.sel=null;P.done=false;drawPractice();a.scrollIntoView({block:'start'})}else{location.hash='#trilha'}};
-  $('#pPrev').onclick=()=>{P.i--;const pq=byId[P.list[P.i]];const pr=prog[pq.id];P.sel=pr?pr.r:null;P.done=!!pr;drawPractice()};
+  const go=i=>{P.i=i;P.fresh=false;drawPractice();a.scrollIntoView({block:'start'})};
+  const pn=$('#pNext'); if(pn)pn.onclick=()=>{if(P.i<P.list.length-1)go(P.i+1);else location.hash='#trilha'};
+  const ps=$('#pSkip'); if(ps)ps.onclick=()=>go(P.i+1);
+  const pr=$('#pRedo'); if(pr)pr.onclick=()=>{P.done=false;P.sel=null;drawPractice()};
+  const pj=$('#pJump'); if(pj)pj.onclick=()=>{let j=P.list.findIndex((id,k)=>k>P.i&&!prog[id]);if(j<0)j=P.list.findIndex(id=>!prog[id]);if(j>=0)go(j)};
+  $('#pPrev').onclick=()=>go(P.i-1);
 }
 
 // ---------- prova completa ----------
@@ -533,7 +540,7 @@ function vErros(){
   view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">Revisão</p><h1>Questões que você errou</h1></div><span class="mono">${ids.length}</span></header>
   <p class="lead">Errar e revisar é o que mais faz a nota subir. Ao acertar aqui, a questão sai da lista. Depois de cada resposta aparece uma pílula do assunto.</p><div id="qarea"></div></section>`;
   if(!ids.length){$('#qarea').innerHTML=`<p class="empty">Nenhum erro registrado ainda. Faça questões na trilha ou uma prova completa.</p>`;return}
-  practice={list:ids,i:0,sel:null,done:false}; drawPractice();
+  practice={list:ids,i:0,sel:null,done:false,fresh:true}; drawPractice();
 }
 
 // ---------- meu progresso ----------
