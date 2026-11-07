@@ -214,6 +214,8 @@ textarea{width:100%;font-family:var(--mono);font-size:.8rem}
   <main><div class="wrap" id="view"></div></main>
 </div>
 
+<script src="supabase.js"></script>
+<script src="config.js"></script>
 <script src="questoes.js"></script>
 <script src="pilulas.js"></script>
 <script>
@@ -253,9 +255,30 @@ function mergeIn(R){
   let ex=[R.exam,exam].filter(Boolean).filter(e=>(e.start||0)>hc).sort((a,b)=>(b.upd||0)-(a.upd||0))[0]||null;exam=ex;
 }
 function setSync(st){sync.state=st;const el=document.getElementById('syncSt');if(!el)return;
-  const M={local:['Salvo só neste aparelho',''],wait:['Conectando à sua conta…',''],slow:['Sem conexão com a conta; salvando neste aparelho',''],saving:['Salvando na sua conta…','on'],ok:['Sincronizado com sua conta','on'],err:['Não foi possível salvar na conta agora','']};
+  const M={local:['Salvo só neste aparelho',''],wait:['Conectando à sua conta…',''],slow:['Sem conexão com a conta; salvando neste aparelho',''],saving:['Salvando na sua conta…','on'],ok:['Sincronizado com sua conta','on'],err:['Não foi possível salvar na conta agora',''],login:['Entre para salvar em todos os aparelhos','']};
   const m=M[st]||M.local;el.textContent=m[0];el.className='syncst '+m[1]}
+function applyRemote(R,fromCache){const before=canon(snapshotState());mergeIn(R);saveLocal();
+  const after=canon(snapshotState());const remote=R?canon({prog:R.prog||{},hist:R.hist||[],exam:R.exam||null,rst:R.rst||{}}):'';
+  if(['wait','slow','login'].includes(sync.state))setSync('ok');
+  if(after!==remote&&!fromCache)push();
+  if(before!==after)refreshQuiet();}
+// ----- Supabase (versão publicada fora do Claude, ex.: Vercel) -----
+async function startSupa(){
+  const cfg=window.SUPA_CFG;if(!cfg||!cfg.url||!window.supabase)return false;
+  const sb=window.supabase.createClient(cfg.url,cfg.key);sync.sb=sb;
+  sb.auth.onAuthStateChange((ev,ses)=>{if(ses&&ses.user&&sync.uid!==ses.user.id)attachSupa(ses.user);if(!ses&&sync.uid){sync.uid=null;sync.ref=null;sync.email='';setSync('login');refreshQuiet()}});
+  const {data}=await sb.auth.getSession();
+  if(data&&data.session)attachSupa(data.session.user);else{setSync('login');refreshQuiet()}
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&sync.uid)pullSupa()});
+  return true;
+}
+async function attachSupa(u){sync.uid=u.id;sync.email=u.email||'';setSync('wait');
+  sync.ref={set:async body=>{const {error}=await sync.sb.from('progresso').upsert({user_id:u.id,data:body,updated_at:new Date().toISOString()});if(error)throw error}};
+  await pullSupa();refreshQuiet();}
+async function pullSupa(){if(!sync.uid)return;const {data,error}=await sync.sb.from('progresso').select('data').eq('user_id',sync.uid).maybeSingle();
+  if(error){setSync('err');return}applyRemote(data?data.data:null,false)}
 async function startSync(){
+  if(window.SUPA_CFG){await startSupa();return}
   let tries=0;while(!(window.claude&&window.claude.use)&&tries<10){await new Promise(r=>setTimeout(r,300));tries++}
   if(!(window.claude&&window.claude.use))return;
   try{const [db,user]=await Promise.all([window.claude.use('db'),window.claude.use('user')]);if(!db||!user)return;
@@ -263,11 +286,7 @@ async function startSync(){
     sync.ref=db.doc('data/users/'+uid+'/progresso');setSync('wait');
     const timer=setTimeout(()=>{if(sync.state==='wait')setSync('slow')},10000);
     sync.ref.onSnapshot(sn=>{if(sn.metadata&&sn.metadata.hasPendingWrites)return;if(!sn.metadata||!sn.metadata.fromCache)clearTimeout(timer);
-      const R=sn.exists?sn.data():null;const before=canon(snapshotState());mergeIn(R);saveLocal();
-      const after=canon(snapshotState());const remote=R?canon({prog:R.prog||{},hist:R.hist||[],exam:R.exam||null,rst:R.rst||{}}):'';
-      if(sync.state==='wait'||sync.state==='slow')setSync('ok');
-      if(after!==remote&&(!sn.metadata||!sn.metadata.fromCache))push();
-      if(before!==after)refreshQuiet();
+      applyRemote(sn.exists?sn.data():null,!!(sn.metadata&&sn.metadata.fromCache));
     },()=>{clearTimeout(timer);setSync('err')});
   }catch(e){}
 }
@@ -523,8 +542,11 @@ function vProgresso(){
   const s=stats();const syncOn=!!sync.ref;
   const rows=ORDER.map(d=>{const t=stats(d);return `<tr><td>${esc(D[d])}</td><td class="n">${t.r}/${t.n}</td><td class="n">${t.r?pct(t.ok,t.r)+'%':'—'}</td><td>${t.r?(confirmScope===d?`<span class="confirm">Apagar ${t.r} respostas? <button class="btn n sm" data-yes="${d}">Apagar</button><button class="btn g sm" data-no>Cancelar</button></span>`:`<button class="btn g sm" data-clear="${d}">Limpar</button>`):''}</td></tr>`}).join('');
   view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">Seus dados</p><h1>Meu progresso</h1></div><span class="syncst ${syncOn&&sync.state==='ok'?'on':''}" id="syncSt2"></span></header>
-  <div class="panel"><h3>${syncOn?'Sincronizado entre computador e celular':'Salvo neste aparelho'}</h3>
-  <p>${syncOn?'Suas respostas, provas e erros ficam guardados na sua conta Claude. Abra este mesmo link no computador ou no celular, com a mesma conta, e o progresso aparece igual nos dois.':'Neste endereço o progresso fica salvo no navegador deste aparelho. Para continuar em outro aparelho, use "Levar para outro aparelho" abaixo. Na versão aberta pelo Claude, a sincronização é automática.'}</p></div>
+  ${sync.sb?(sync.uid?`<div class="panel"><h3>Sincronizado entre computador e celular</h3><p>Você entrou como <b>${esc(sync.email)}</b>. Suas respostas, provas e erros ficam salvos na sua conta e aparecem iguais em qualquer navegador ou aparelho em que você entrar com este e-mail.</p><div class="ctas" style="margin-top:4px"><button class="btn g" id="sairBtn">Sair</button></div></div>`
+  :`<div class="panel"><h3>Entre para salvar em todos os aparelhos</h3><p>Informe seu e-mail. Você recebe um link de acesso, sem senha. Depois de entrar, o progresso fica salvo na sua conta e aparece no computador, no celular e em qualquer navegador.</p>
+    <form id="loginForm" class="ctas" style="margin-top:4px"><input id="loginEmail" type="email" required placeholder="seu@email.com" autocomplete="email" style="flex:1 1 240px;font:inherit;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 10px;min-width:0"><button class="btn n" type="submit">Enviar link de acesso</button></form><p id="loginMsg" class="mono" style="color:var(--muted)"></p></div>`)
+  :`<div class="panel"><h3>${syncOn?'Sincronizado entre computador e celular':'Salvo neste aparelho'}</h3>
+  <p>${syncOn?'Suas respostas, provas e erros ficam guardados na sua conta Claude. Abra este mesmo link no computador ou no celular, com a mesma conta, e o progresso aparece igual nos dois.':'Neste endereço o progresso fica salvo no navegador deste aparelho. Para continuar em outro aparelho, use "Levar para outro aparelho" abaixo.'}</p></div>`}
   <div class="grid g3"><div class="panel stat"><span class="eyebrow">Respondidas</span><b class="mono">${s.r}</b></div><div class="panel stat"><span class="eyebrow">Acertos</span><b class="mono">${pct(s.ok,s.r)}%</b></div><div class="panel stat"><span class="eyebrow">Provas feitas</span><b class="mono">${hist.length}</b></div></div>
   <div class="panel"><h3>Por matéria</h3><div class="tw"><table><tr><th>Matéria</th><th>Feitas</th><th>Acertos</th><th></th></tr>${rows}</table></div></div>
   <div class="panel"><h3>Limpar respostas</h3><p class="lead">Apagar não tem volta. As questões voltam a aparecer como não respondidas${syncOn?' em todos os seus aparelhos':''}.</p>
@@ -537,7 +559,11 @@ function vProgresso(){
     <label for="impTxt" class="eyebrow" style="margin-top:10px">Colar código vindo de outro aparelho</label>
     <textarea id="impTxt" rows="3" placeholder="Cole aqui o código copiado no outro aparelho"></textarea>
     <div class="ctas" style="margin-top:4px"><button class="btn g" id="impBtn">Importar progresso</button></div><p id="impMsg" class="mono" style="color:var(--muted)"></p></div></section>`;
-  const st2=$('#syncSt2');if(st2)st2.textContent=syncOn?(sync.state==='ok'?'Sincronizado':'Sincronizando…'):'Só neste aparelho';
+  const lf=$('#loginForm');if(lf)lf.onsubmit=async e=>{e.preventDefault();const em=$('#loginEmail').value.trim();$('#loginMsg').textContent='Enviando…';
+    const {error}=await sync.sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin+location.pathname}});
+    $('#loginMsg').textContent=error?('Não foi possível enviar: '+error.message):'Pronto. Abra o e-mail que enviamos para '+em+' e toque no link. Use o link no mesmo navegador em que quer estudar.'};
+  const sb2=$('#sairBtn');if(sb2)sb2.onclick=async()=>{await sync.sb.auth.signOut();vProgresso()};
+  const st2=$('#syncSt2');if(st2)st2.textContent=syncOn?(sync.state==='ok'?'Sincronizado':'Sincronizando…'):(sync.sb?'Não conectado':'Só neste aparelho');
   view.querySelectorAll('[data-clear]').forEach(b=>b.onclick=()=>{confirmScope=b.dataset.clear;vProgresso()});
   view.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>{confirmScope=null;vProgresso()});
   view.querySelectorAll('[data-yes]').forEach(b=>b.onclick=()=>{const sc=b.dataset.yes;clearScope(sc);confirmScope=null;vProgresso();renderNav('progresso');const m=$('#clrMsg');if(m)m.textContent=sc==='ALL'?'Tudo apagado.':sc==='PROVAS'?'Histórico de provas apagado.':'Respostas de '+D[sc]+' apagadas.'});
