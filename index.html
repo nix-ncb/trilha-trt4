@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Trilha TRT4 2026</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: plataforma de curso — barra lateral de módulos (trilha) + área de estudo; no celular, a barra vira menu superior.
+   Assinatura visual: o "marca-texto" amarelo do concurseiro sobre a lei seca. */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --surface-2:#e9edf3; --line:#d5dbe4;
+  --ink:#14213a; --muted:#56627a; --navy:#1d3b6f; --navy-ink:#ffffff;
+  --mark:#f7dc4a; --mark-soft:#fbefa6; --mark-ink:#14213a;
+  --ok:#1f7a4d; --ok-soft:#dff2e7; --bad:#b3261e; --bad-soft:#f8e1df;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1522; --surface:#161e2e; --surface-2:#1e2839; --line:#2b3650;
+  --ink:#e8edf6; --muted:#9aa6bd; --navy:#8fb0ea; --navy-ink:#0f1522;
+  --mark:#e9cc3a; --mark-soft:#4a4320; --mark-ink:#0f1522;
+  --ok:#5fcf93; --ok-soft:#173a29; --bad:#ff8a80; --bad-soft:#40201e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1522; --surface:#161e2e; --surface-2:#1e2839; --line:#2b3650;
+  --ink:#e8edf6; --muted:#9aa6bd; --navy:#8fb0ea; --navy-ink:#0f1522;
+  --mark:#e9cc3a; --mark-soft:#4a4320; --mark-ink:#0f1522;
+  --ok:#5fcf93; --ok-soft:#173a29; --bad:#ff8a80; --bad-soft:#40201e; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.9rem,4.2vw,2.9rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.45rem;font-weight:700}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:0}
+a{color:var(--navy)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+.mark{background:linear-gradient(transparent 55%,var(--mark) 55%,var(--mark) 92%,transparent 92%);color:inherit;padding:0 .1em}
+.eyebrow{font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+.app{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:100vh}
+.side{background:var(--surface);border-right:1px solid var(--line);padding:22px 16px;position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+.brand{display:flex;flex-direction:column;gap:2px;padding:0 8px}
+.brand b{font-family:var(--display);font-size:1.35rem;font-weight:800;letter-spacing:-.01em}
+.brand span{font-size:.82rem;color:var(--muted)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;color:var(--ink);font-weight:500;font-size:.95rem}
+.nav a:hover{background:var(--surface-2)}
+.nav a.on{background:var(--navy);color:var(--navy-ink)}
+.nav a .pct{margin-left:auto;font-family:var(--mono);font-size:.75rem;color:inherit;opacity:.75}
+.nav .grp{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--muted);padding:12px 10px 4px}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--line)}
+.dot.g{background:var(--navy)} .dot.e{background:var(--mark)}
+.topbar{display:none}
+
+main{padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+
+.hero{background:var(--navy);color:var(--navy-ink);border-radius:16px;padding:28px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;align-items:end}
+.hero .eyebrow{color:inherit;opacity:.8}
+.hero h1 .mark{background:linear-gradient(transparent 58%,var(--mark) 58%,var(--mark) 90%,transparent 90%);color:var(--navy-ink)}
+:root[data-theme="dark"] .hero h1 .mark{color:var(--navy-ink)}
+.hero p{opacity:.9;max-width:52ch;margin-top:10px}
+.count{background:rgba(255,255,255,.1);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:4px}
+.count b{font-family:var(--display);font-size:3rem;font-weight:800;line-height:1}
+.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{border:0;border-radius:999px;padding:11px 20px;font-weight:700;font-size:.95rem;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn.y{background:var(--mark);color:var(--mark-ink)}
+.btn.o{background:transparent;color:inherit;box-shadow:inset 0 0 0 2px currentColor}
+.btn.n{background:var(--navy);color:var(--navy-ink)}
+.btn.g{background:var(--surface-2);color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.grid{display:grid;gap:14px}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.stat b{font-family:var(--display);font-size:2rem;font-weight:800}
+.stat small{color:var(--muted)}
+.sec{display:flex;flex-direction:column;gap:14px}
+.sec>header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.lead{color:var(--muted);max-width:68ch}
+
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.mod{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .15s}
+.mod:hover{border-color:var(--navy);transform:translateY(-1px)}
+.mod .meta{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted)}
+.bar{height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden;display:flex}
+.bar i{display:block;height:100%;background:var(--navy)}
+.bar i.y{background:var(--mark)}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--surface-2);color:var(--muted)}
+.tag.e{background:var(--mark-soft);color:var(--ink)}
+
+.pts{display:flex;flex-direction:column;gap:8px}
+.pts .row{display:grid;grid-template-columns:minmax(0,13rem) minmax(0,1fr) 7rem;gap:10px;align-items:center;font-size:.9rem}
+.pts .row span:first-child{text-align:right}
+.pts .track{height:16px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+.pts .track i{display:block;height:100%;background:var(--muted);opacity:.45}
+.pts .track i.e{background:var(--navy);opacity:1}
+.pts .row .v{font-family:var(--mono);font-size:.8rem;color:var(--muted);white-space:nowrap}
+
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs button{background:none;border:0;padding:10px 14px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--ink);border-color:var(--mark)}
+.resumo{display:flex;flex-direction:column;gap:14px}
+.resumo h3{margin-top:6px}
+.resumo ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;max-width:75ch}
+.resumo li::marker{color:var(--navy)}
+.tip{background:var(--mark-soft);border-radius:var(--r);padding:14px 16px;font-size:.95rem}
+
+.qtools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+select,input[type=checkbox]{font:inherit}
+select{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px;max-width:100%}
+.chk{display:flex;align-items:center;gap:6px;font-size:.92rem;color:var(--muted)}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.qhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;font-size:.85rem;color:var(--muted)}
+.texto{background:var(--surface-2);border-radius:var(--r);padding:16px 18px;font-size:.95rem;white-space:pre-line;max-height:320px;overflow-y:auto}
+.texto summary{cursor:pointer;font-weight:700;color:var(--ink);white-space:normal;margin-bottom:8px}
+.enun{font-size:1.04rem;white-space:pre-line;font-weight:500}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:10px;align-items:start;text-align:left;background:var(--surface);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;line-height:1.45}
+.opt b{font-family:var(--mono);display:grid;place-items:center;width:1.8rem;height:1.8rem;border-radius:50%;background:var(--surface-2);font-size:.85rem}
+.opt:hover:not(:disabled){border-color:var(--navy)}
+.opt.sel{border-color:var(--navy);background:var(--surface-2)}
+.opt.sel b{background:var(--navy);color:var(--navy-ink)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.ok b{background:var(--ok);color:#fff}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.opt.bad b{background:var(--bad);color:#fff}
+.opt:disabled{cursor:default}
+.fb{border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.fb.ok{background:var(--ok-soft)} .fb.bad{background:var(--bad-soft)}
+.fb strong{font-family:var(--display)}
+.qnav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+.sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(2.6rem,1fr));gap:6px}
+.sheet button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:6px 0;font-family:var(--mono);font-size:.8rem}
+.sheet button.done{background:var(--navy);color:var(--navy-ink);border-color:var(--navy)}
+.sheet button.cur{outline:3px solid var(--mark)}
+.sheet button.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.sheet button.bad{background:var(--bad);color:#fff;border-color:var(--bad)}
+.timer{font-family:var(--mono);font-size:1.1rem;font-weight:500;background:var(--surface-2);padding:6px 12px;border-radius:8px}
+.examhead{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tw{overflow-x:auto}
+.big{font-family:var(--display);font-size:3.2rem;font-weight:800;line-height:1}
+.empty{color:var(--muted);padding:24px;text-align:center;border:1.5px dashed var(--line);border-radius:var(--r)}
+.foot{color:var(--muted);font-size:.85rem;max-width:75ch}
+.themebtn{margin-top:auto;background:var(--surface-2);border:0;color:var(--ink);border-radius:8px;padding:8px 10px;font-size:.85rem;text-align:left}
+
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{display:none}
+  .side.open{display:flex;position:fixed;inset:0;z-index:20;height:auto;padding-top:calc(22px + env(safe-area-inset-top,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .topbar{display:flex;position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--surface);border-bottom:1px solid var(--line);padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));justify-content:space-between;align-items:center}
+  .topbar b{font-family:var(--display);font-weight:800}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:11;background:var(--surface)}
+  .hero{grid-template-columns:minmax(0,1fr);padding:22px}
+  .g3,.g2{grid-template-columns:minmax(0,1fr)}
+  .pts .row{grid-template-columns:minmax(0,7.5rem) minmax(0,1fr) 6rem;font-size:.8rem}
+  .examhead{top:calc(env(safe-area-inset-top,0px) + 53px)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="topbar"><b>Trilha TRT4</b><button class="btn g" id="menuBtn" aria-expanded="false">Módulos</button></div>
+<div class="app">
+  <aside class="side" id="side">
+    <div class="brand"><b>Trilha TRT4</b><span>Analista Judiciário · Área Administrativa</span></div>
+    <nav class="nav" id="nav"></nav>
+    <button class="themebtn" id="themeBtn">Tema: automático</button>
+  </aside>
+  <main><div class="wrap" id="view"></div></main>
+</div>
+
+<script src="questoes.js"></script>
+<script>
+(function(){
+const B = window.BANCO || {disciplinas:{},questoes:[],textos:[],gerais:[]};
+const Q = B.questoes, D = B.disciplinas, G = new Set(B.gerais);
+const ORDER = ['LP','MAT','LEG','DH','INF','CONST','ADM','AFO','GP','ADMIN','DT','DPT'];
+const PROVA = {LP:10,MAT:5,LEG:5,DH:5,INF:5,CONST:5,ADM:7,AFO:5,ADMIN:4,GP:3,DT:3,DPT:3};
+const LET = 'ABCDE';
+const PROVA_DATA = new Date('2027-01-31T14:00:00-03:00');
+const byD = {}; ORDER.forEach(d=>byD[d]=Q.filter(q=>q.d===d));
+const byId = {}; Q.forEach(q=>byId[q.id]=q);
+
+// ---------- armazenamento (só neste navegador) ----------
+function load(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def}catch(e){return def}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+let prog = load('trt4-prog',{});      // id -> {r, ok}
+let hist = load('trt4-provas',[]);    // [{data, acertos, pontos, por}]
+let exam = load('trt4-exam',null);    // prova em andamento
+
+// ---------- resumos por módulo ----------
+const RES = {
+LP:`<p class="tip">FCC: <b>interpretação &gt; reescrita &gt; pontuação &gt; tempos verbais &gt; concordância &gt; pronomes &gt; regência e crase</b>. Leia o comando antes do texto e volte ao texto sempre.</p>
+<h3>Interpretação e reescrita</h3><ul><li>A resposta está no texto; desconfie de "sempre", "nunca", "todos".</li><li>Reescrita correta mantém <span class="mark">sentido e correção</span>. Trocar "embora" (concessão) por "porque" (causa) muda o sentido.</li><li>Conectivos: concessivos (embora, conquanto, ainda que + subjuntivo); causais (porque, visto que, já que); conclusivos (logo, portanto, por conseguinte); adversativos (mas, porém, contudo, no entanto); proporcionais (à medida que).</li></ul>
+<h3>Gramática que mais cai</h3><ul><li><b>Pontuação:</b> nunca vírgula entre sujeito e verbo nem entre verbo e complemento. Vírgula obrigatória no vocativo, aposto, adjunto adverbial longo deslocado e oração adjetiva explicativa.</li><li><b>Concordância:</b> "haver" (existir) e "fazer" (tempo) ficam no singular, inclusive o auxiliar ("deve haver"). Passiva sintética concorda ("Vendem-se casas"); com VTI, singular ("Precisa-se de técnicos").</li><li><b>Crase:</b> nunca antes de verbo, masculino, pronome de tratamento, "cada", cidade sem artigo. Facultativa antes de possessivo feminino e de nome próprio feminino.</li><li><b>Colocação:</b> palavras negativas, pronomes relativos/indefinidos e conjunções subordinativas atraem o pronome (próclise). Futuro sem atrativo pede mesóclise.</li><li><b>Vozes:</b> na passagem ativa → passiva, mantenha o tempo verbal ("analisará" → "serão analisados").</li><li><b>Discurso indireto:</b> presente → imperfeito; futuro → futuro do pretérito; "este" → "aquele"; "amanhã" → "no dia seguinte".</li></ul>`,
+MAT:`<p class="tip">5 questões contextualizadas, de baixa a média dificuldade. Porcentagem e estatística básica caem quase sempre.</p>
+<h3>Porcentagem</h3><ul><li>Aumentos e descontos sucessivos <span class="mark">multiplicam</span>: +20% e −20% = 1,2 × 0,8 = 0,96 (perda de 4%).</li><li>Preço original após desconto de d%: divida pelo fator (1 − d).</li><li>Para desfazer um aumento de 25%, reduza 20% (1/1,25 = 0,8).</li></ul>
+<h3>Estatística</h3><ul><li>Média ponderada = Σ(valor × peso) / Σpesos. Mediana = valor central do rol (n par: média dos dois centrais). Moda = mais frequente.</li><li>Amplitude = maior − menor. Variância = média dos quadrados dos desvios. Desvio-padrão = √variância. CV = DP / média.</li><li>Somar constante não muda a dispersão; multiplicar por k multiplica o DP por k e a variância por k².</li><li>Gráfico de setores: ângulo = % × 360° (90° = 25%).</li></ul>
+<h3>Lógica e problemas</h3><ul><li>Negação de "todo A é B" = "algum A não é B". De Morgan: ~(p ∧ q) = ~p ∨ ~q. ~(p → q) = p ∧ ~q. Contrapositiva: p → q ≡ ~q → ~p.</li><li>Divisão proporcional: total ÷ soma das partes. Regra de três inversa quando mais de um implica menos do outro.</li><li>MMC para eventos que coincidem; MDC para dividir em grupos iguais e maiores possíveis.</li></ul>`,
+LEG:`<p class="tip">A FCC cobra a letra das normas do próprio tribunal. <b>Leia na íntegra o Regimento Interno atualizado até a RA 31/2026</b> no site do TRT4 — este resumo não substitui o texto.</p>
+<h3>Regimento Interno do TRT4</h3><ul><li>48 desembargadores. Órgão Especial: 16 membros, metade por antiguidade e metade eleita pelo Pleno (CF, art. 93, XI: mínimo 11, máximo 25).</li><li>Órgãos julgadores: Pleno, Órgão Especial, SDC, SDI-1, SDI-2, SEEx (Execução), SEJAI (Agravos Internos) e 11 Turmas de 4 desembargadores.</li><li>Direção: Presidente, Vice-Presidente Institucional e de Atuação em Demandas Coletivas, Vice-Presidente Jurisdicional e Corregedoria Regional.</li></ul>
+<h3>Código de Conduta (Portaria 4.573/2023)</h3><ul><li>Alcança servidores (inclusive cedidos), agentes sem vínculo, estagiários e terceirizados com dedicação exclusiva.</li><li>Brinde permitido até <span class="mark">1% do teto constitucional</span>; presente que não pode ser devolvido vai à Secretaria de Administração em 10 dias, para doação.</li><li>Defesa em 5 dias úteis; apuração em 60 dias + 60; recurso de empresa (Lei 14.133) em 15 dias úteis; estagiário em 10 dias corridos; reconsideração em 5 dias úteis; revisão do código a cada 2 anos.</li><li>Vedado chefiar cônjuge ou parente até o 3º grau; falar em nome do TRT4 sem autorização; usar informação privilegiada.</li></ul>
+<h3>Res. CSJT 360/2023 e CNJ 351/2020</h3><ul><li>Violência e assédio independem de intencionalidade; podem ser conduta única. Assédio sexual não exige hierarquia nem contato físico.</li><li>Anonimato vedado; sigilo obrigatório; registro do relato só com autorização expressa.</li><li>Comitês em 45 dias; não substituem sindicância nem PAD. Semana de Combate ao Assédio: 1ª semana de maio.</li></ul>
+<h3>Res. CNJ 400/2021 (com a 550/2024)</h3><ul><li>PLS instituído por ato do Presidente, revisado no máximo a cada 2 anos. Relatório de Desempenho ao CNJ até 28/02.</li><li>Comissão Gestora: presidida por magistrado, mínimo de 5 servidores. Unidade de sustentabilidade: 2 servidores (3 se o tribunal tiver mais de 5.000).</li><li>Plano de compensação de gases de efeito estufa até 2030. Balanço da Sustentabilidade anual, pelo DPJ/CNJ, com o IDS.</li></ul>`,
+DH:`<p class="tip">5 questões, quase sempre na letra dos tratados: DUDH, Pacto de San José, Estatuto de Roma, Declaração dos Povos Indígenas e resoluções do CNJ/CSJT.</p>
+<h3>Teoria</h3><ul><li>Características: universalidade, indivisibilidade, interdependência, inalienabilidade, imprescritibilidade, historicidade, vedação do retrocesso.</li><li>Dimensões: 1ª liberdade (civis e políticos), 2ª igualdade (sociais), 3ª fraternidade (difusos).</li><li>Tratados com rito de 3/5 em 2 turnos nas duas Casas = <span class="mark">emenda constitucional</span>; os demais de DH = supralegais (SV 25: sem prisão do depositário infiel).</li></ul>
+<h3>Sistemas de proteção</h3><ul><li>Comissão e Corte Interamericanas: 7 membros cada. Só Estados e a Comissão levam casos à Corte; indivíduos peticionam à Comissão (esgotamento interno + 6 meses).</li><li>TPI: complementar, crimes imprescritíveis, sem jurisdição sobre menores de 18; genocídio, contra a humanidade, de guerra e agressão.</li><li>Casos do Brasil na Corte IDH: Ximenes Lopes (1ª condenação, 2006), Gomes Lund, Fazenda Brasil Verde (trabalho escravo), Favela Nova Brasília, Herzog.</li></ul>
+<h3>Justiça do Trabalho</h3><ul><li>Res. CSJT 368/2023: Comitês Regionais em 90 dias, mandato de 2 anos; meses temáticos março (gênero), junho (LGBTQIAP+), setembro (PcD), novembro (raça); relatório até 31/01; laicidade do Estado como princípio.</li><li>Res. CNJ 492/2023: Protocolo de Julgamento com Perspectiva de Gênero obrigatório; capacitação ao menos anual; cria o Comitê de Incentivo à Participação Institucional Feminina.</li></ul>`,
+INF:`<p class="tip">Questões práticas de escritório: atalhos, Excel, compartilhamento no Drive/Microsoft 365, busca no Google e golpes.</p>
+<h3>Windows e Office</h3><ul><li>Win+L bloqueia; Win+D área de trabalho; Win+E Explorador; Win+V histórico da área de transferência; Win+Shift+S captura; Ctrl+Shift+Esc Gerenciador de Tarefas; Shift+Delete exclui sem Lixeira.</li><li>Excel: <code>$A$1</code> absoluta, <code>$A1</code> fixa coluna, <code>A$1</code> fixa linha; SE, SOMASE, CONT.SE, PROCV; #DIV/0!, #REF!, #NOME?, #N/D.</li><li>Word: Ctrl+H substituir; Ctrl+Enter quebra de página; Controlar Alterações; Mala Direta. PowerPoint: F5 do início, Shift+F5 do slide atual; Slide Mestre.</li></ul>
+<h3>Google Workspace</h3><ul><li>Drive: Leitor, Comentarista, Editor; "Qualquer pessoa com o link"; Lixeira apaga após 30 dias; bloquear download para leitores.</li><li>Agenda: convidados, anexos do Drive, Meet automático, recorrência, permissões de convidados. Gmail: marcadores (vários por e-mail), arquivar, desfazer envio, configurações rápidas.</li></ul>
+<h3>Internet e segurança</h3><ul><li>Busca: "aspas" frase exata; −exclui; site:; filetype:; OR.</li><li>Worm se replica sozinho; vírus precisa de hospedeiro; trojan se disfarça; ransomware sequestra dados; phishing imita instituições; keylogger grava teclas.</li><li>2FA: algo que você sabe + algo que tem ou é. SMTP envia; POP3/IMAP recebem. Intranet é rede interna com tecnologia da internet.</li></ul>`,
+CONST:`<p class="tip">5 questões em média, na letra da CF. Prazos, quóruns e "quem nomeia quem" são o alvo preferido.</p>
+<ul><li><b>Fundamentos (art. 1º):</b> soberania, cidadania, dignidade, valores sociais do trabalho e da livre iniciativa, pluralismo político.</li><li><b>Eficácia:</b> plena (imediata e integral), contida (imediata, lei pode restringir — ex.: profissão), limitada (depende de lei — ex.: greve do servidor).</li><li><b>Controle:</b> difuso por qualquer juiz; reserva de plenário (art. 97, SV 10); ADI (federal e estadual), ADC (só federal), ADPF (subsidiária, alcança municipal e pré-1988). Legitimados do art. 103.</li><li><b>Extradição:</b> nato nunca; naturalizado só por crime comum anterior à naturalização ou tráfico.</li><li><b>Cargos de nato:</b> Presidente e Vice, Presidentes da Câmara e do Senado, Ministro do STF, diplomata, oficial das Forças Armadas, Ministro da Defesa.</li><li><b>Art. 37:</b> LIMPE; concurso válido até 2 anos + 2; estabilidade após 3 anos com avaliação especial.</li><li><b>Judiciário:</b> STF 11; STJ ao menos 33; TST 27 (35 a 70 anos); TRT ao menos 7; CNJ 15 membros, mandato de 2 anos. CSJT e Enamat funcionam junto ao TST.</li><li><b>Processo legislativo:</b> PEC 3/5 em 2 turnos; LC maioria absoluta; MP 60 + 60 dias; veto derrubado por maioria absoluta em sessão conjunta.</li></ul>`,
+ADM:`<p class="tip">É a matéria que mais vale na prova. Priorize Lei 14.133, atos administrativos, Lei 8.112 e Lei 9.784.</p>
+<h3>Lei 14.133/2021</h3><ul><li>Modalidades: pregão, concorrência, concurso, leilão, diálogo competitivo. Sem tomada de preços e convite.</li><li>Fases: preparatória → edital → propostas e lances → julgamento → <span class="mark">habilitação</span> → recursal → homologação.</li><li>Dispensa por valor: R$ 100 mil (engenharia) e R$ 50 mil (demais) — valores originais, atualizados por decreto. Emergência: até 1 ano, sem prorrogação.</li><li>Inexigibilidade = competição inviável (exclusivo, artista consagrado, serviço técnico especializado, credenciamento, imóvel específico).</li><li>Recurso em 3 dias úteis; acréscimo ou supressão unilateral até 25% (reforma: 50% para acréscimos); serviços contínuos 5 anos, até 10.</li></ul>
+<h3>Atos, poderes e processo</h3><ul><li>Elementos: competência, finalidade, forma, motivo, objeto. Mérito = motivo e objeto.</li><li>Revogação: conveniência, ex nunc, só a Administração. Anulação: ilegalidade, ex tunc, em 5 anos para atos favoráveis (art. 54 da Lei 9.784).</li><li>Lei 9.784: prazo geral 5 dias; recurso 10 dias, decidido em 30; até 3 instâncias; não se delegam atos normativos, recursos e competência exclusiva.</li></ul>
+<h3>Lei 8.112/1990</h3><ul><li>Posse em 30 dias; exercício em 15. Suspensão até 90 dias. PAD 60 + 60; sindicância 30 + 30.</li><li>Prescrição: demissão 5 anos; suspensão 2 anos; advertência 180 dias.</li></ul>
+<h3>Outros</h3><ul><li>Improbidade só com dolo; prescrição de 8 anos; legitimidade do MP e da pessoa jurídica lesada.</li><li>LAI: 20 + 10 dias; sigilo 25/15/5 anos; informação pessoal até 100 anos.</li><li>Responsabilidade civil objetiva (art. 37, § 6º); ação contra o Estado, regresso contra o agente com dolo ou culpa.</li></ul>`,
+AFO:`<p class="tip">Orçamento na CF, Lei 4.320, LRF e MCASP. Classificações e créditos adicionais lideram.</p>
+<ul><li><b>PPA</b> 4 anos (metas de capital e programas continuados); <b>LDO</b> metas e prioridades, orienta a LOA; <b>LOA</b> fiscal + investimento das estatais + seguridade.</li><li><b>Princípios:</b> exclusividade, universalidade, anualidade, unidade, não afetação (só impostos), orçamento bruto.</li><li><b>Despesa:</b> empenho → liquidação → pagamento. Empenho ordinário, por estimativa ou global. Restos a pagar = empenhado e não pago até 31/12.</li><li><b>Créditos adicionais:</b> suplementar (reforço), especial (sem dotação), extraordinário (urgente e imprevisível; MP na União). Fontes: superávit financeiro, excesso de arrecadação, anulação de dotações, operações de crédito.</li><li><b>Receita:</b> previsão, lançamento, arrecadação, recolhimento. Alienação de bens é receita de capital; aluguel é patrimonial.</li><li><b>LRF:</b> pessoal da União até 50% da RCL (Judiciário 6%); prudencial 95%; excesso eliminado em 2 quadrimestres (1/3 no primeiro); DOCC acima de 2 exercícios; RREO bimestral; RGF quadrimestral.</li><li><b>MCASP:</b> regime orçamentário misto (receita arrecadada, despesa empenhada); Balanço Orçamentário, Financeiro, Patrimonial, DVP, DFC (operacional, investimento, financiamento).</li></ul>`,
+GP:`<ul><li><b>Evolução:</b> departamento pessoal → RH → gestão estratégica de pessoas e por competências (CHA).</li><li><b>Avaliação:</b> 360°, incidentes críticos, escalas gráficas, APO. Erros: halo, tendência central, recência, leniência.</li><li><b>Clima × cultura:</b> clima é percepção momentânea; cultura é profunda (Schein: artefatos, valores, pressupostos).</li><li><b>Mudança:</b> Lewin (descongelar, mudar, recongelar); Kotter começa pelo senso de urgência.</li><li><b>Conflitos (Thomas-Kilmann):</b> colaboração, competição, acomodação, evitação, compromisso.</li><li><b>Motivação:</b> Maslow; <span class="mark">Herzberg</span> (higiênicos evitam insatisfação; motivadores geram satisfação); McGregor X e Y; Vroom; Adams (equidade).</li><li><b>Liderança:</b> situacional (maturidade), transacional × transformacional, grid 9.9.</li><li><b>Decisão:</b> programada × não programada; racionalidade limitada (Simon); groupthink.</li><li><b>Indicadores:</b> eficiência (recursos), eficácia (metas), efetividade (impacto).</li></ul>`,
+ADMIN:`<ul><li><b>Teorias:</b> Taylor (tarefas), Fayol (POCCC, estrutura), Weber (burocracia), Mayo (relações humanas, Hawthorne), sistêmica (sistemas abertos), contingencial (depende do ambiente).</li><li><b>Estruturas:</b> linear, funcional, linha-staff, divisional, matricial (dupla subordinação), em rede. Departamentalização funcional, por produto, territorial, por clientela, por processo, por projeto.</li><li><b>Modelos de administração pública:</b> patrimonialista → burocrático (1930) → gerencial (1995, foco em resultados).</li><li><b>Planejamento:</b> estratégico (cúpula, longo prazo), tático, operacional. SWOT; BSC (financeira, clientes, processos, aprendizado).</li><li><b>Qualidade:</b> PDCA, Ishikawa, Pareto 80/20, ISO 9001, GesPública e MEGP.</li><li><b>Processos e projetos:</b> BPMN; EAP; caminho crítico (maior duração, sem folga); escopo-prazo-custo; Scrum.</li><li><b>Contratos (14.133):</b> fiscal e gestor designados; governança das contratações no Judiciário: Res. CNJ 347/2020.</li></ul>`,
+DT:`<p class="tip">A FCC cobra CLT pós-Reforma e súmulas do TST na letra. Prazos e percentuais decidem a questão.</p>
+<ul><li><b>Emprego:</b> pessoa física, pessoalidade, não eventualidade, onerosidade, subordinação. Exclusividade não é requisito.</li><li><b>Jornada:</b> 8h/44h; até 2 extras por dia com 50%; intervalo de 1 a 2h acima de 6h (15 min entre 4 e 6h); supressão paga só o período suprimido, natureza indenizatória; interjornada 11h; noturno urbano 22h–5h, hora de 52'30", 20%.</li><li><b>Banco de horas:</b> individual escrito até 6 meses; anual só por negociação coletiva. 12x36 por acordo individual escrito.</li><li><b>Férias:</b> até 3 períodos (um ≥ 14 dias, demais ≥ 5); abono de 1/3; pagamento 2 dias antes; fora do período concessivo, em dobro.</li><li><b>Rescisão:</b> aviso 30 + 3 por ano (máx. 90); acordo do art. 484-A (metade do aviso e 20% do FGTS, saque de 80%, sem seguro-desemprego); culpa recíproca metade (Súm. 14).</li><li><b>Estabilidades:</b> gestante até 5 meses após o parto, mesmo em contrato determinado (Súm. 244); dirigente sindical até 1 ano após o mandato; acidentado 12 meses.</li><li><b>Adicionais:</b> insalubridade 10/20/40%; periculosidade 30% sobre o salário-base; não acumulam.</li><li><b>Prescrição:</b> 5 anos, até 2 após o fim do contrato; FGTS também quinquenal; intercorrente de 2 anos.</li><li><b>Teletrabalho:</b> presencial → tele por mútuo acordo; tele → presencial pelo empregador, com 15 dias de transição.</li></ul>`,
+DPT:`<p class="tip">Prazos, audiência e recursos. Grave a tabela dos prazos: 8 dias para quase tudo, 5 para embargos de declaração e embargos à execução.</p>
+<ul><li><b>Competência (art. 114 CF):</b> relação de trabalho, greve, representação sindical, dano moral trabalhista, multas da fiscalização. Estatutário vai para a Justiça Comum (ADI 3395). Territorial: local da prestação de serviços.</li><li><b>Prazos:</b> em dias úteis; suspensos de 20/12 a 20/01. Recursos em 8 dias; embargos de declaração em 5 (interrompem).</li><li><b>Audiência:</b> ausência do reclamante = arquivamento (custas, salvo justificativa em 15 dias); do reclamado = revelia e confissão. Duas propostas de conciliação. Defesa oral em 20 minutos. Preposto não precisa ser empregado.</li><li><b>Sumaríssimo:</b> até 40 salários mínimos; sem Administração direta; sem citação por edital; 2 testemunhas; apreciação em 15 dias. Ordinário: 3 testemunhas (6 no inquérito).</li><li><b>Custas:</b> 2%, mínimo R$ 10,64, máximo 4× o teto do RGPS. Honorários de sucumbência 5% a 15%. Justiça gratuita até 40% do teto do RGPS.</li><li><b>Jus postulandi:</b> só até o TRT; não vale para rescisória, cautelar, MS e recursos no TST (Súm. 425).</li><li><b>Execução:</b> citação para pagar em 48h; impugnação da conta em 8 dias; embargos à execução em 5 dias após garantir o juízo; agravo de petição em 8 dias; arrematação com sinal de 20%.</li><li><b>Lei 11.419:</b> ato eletrônico até 24h do último dia; publicação no DJe = 1º dia útil após a disponibilização; intimação no portal considerada feita após 10 dias corridos.</li></ul>`
+};
+
+// ---------- utilidades ----------
+const $ = s=>document.querySelector(s);
+const view = $('#view');
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function stats(d){const L=d?byD[d]:Q;let r=0,ok=0;L.forEach(q=>{const p=prog[q.id];if(p){r++;if(p.ok)ok++}});return {n:L.length,r,ok}}
+function pct(a,b){return b?Math.round(a/b*100):0}
+function shuffle(a,seed){const r=[...a];let s=seed||Date.now();for(let i=r.length-1;i>0;i--){s=(s*9301+49297)%233280;const j=Math.floor(s/233280*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+function daysLeft(){return Math.max(0,Math.ceil((PROVA_DATA-new Date())/86400000))}
+
+// ---------- navegação lateral ----------
+function renderNav(route){
+  const items=[['inicio','Início'],['trilha','Trilha de estudo'],['prova','Prova completa'],['erros','Revisar erros'],['plano','Plano e estratégia']];
+  let h=items.map(([k,l])=>`<a href="#${k}" class="${route===k?'on':''}">${l}</a>`).join('');
+  h+=`<div class="grp">Conhecimentos gerais · peso 1</div>`;
+  ORDER.forEach((d,i)=>{ if(i===5) h+=`<div class="grp">Conhecimentos específicos · peso 2</div>`;
+    const s=stats(d); h+=`<a href="#m-${d.toLowerCase()}" class="${route==='m-'+d.toLowerCase()?'on':''}"><span class="dot ${G.has(d)?'':'g'}"></span>${esc(D[d])}<span class="pct">${pct(s.r,s.n)}%</span></a>`});
+  $('#nav').innerHTML=h;
+}
+
+// ---------- início ----------
+function vInicio(){
+  const s=stats(); const ult=hist[hist.length-1];
+  const pts=ORDER.map(d=>({d,q:PROVA[d],w:G.has(d)?1:2})).sort((a,b)=>b.q*b.w-a.q*a.w);
+  const maxp=Math.max(...pts.map(p=>p.q*p.w));
+  view.innerHTML=`
+  <section class="hero">
+    <div><p class="eyebrow">FCC · TRT 4ª Região · Analista Judiciário – Área Administrativa</p>
+      <h1>1.010 questões no estilo da <span class="mark">FCC</span>, organizadas pelo que mais cai</h1>
+      <p>Resumo por matéria, prática com gabarito comentado e provas completas de 60 questões no formato do edital: 30 gerais (peso 1) e 30 específicas (peso 2).</p>
+      <div class="ctas"><a class="btn y" href="#trilha">Começar a trilha</a><a class="btn o" href="#prova">Fazer prova completa</a></div></div>
+    <div class="count"><span class="eyebrow">Faltam</span><b class="mono">${daysLeft()}</b><span>dias para a prova · 31/01/2027, à tarde, em Porto Alegre</span></div>
+  </section>
+  <div class="grid g3">
+    <div class="panel stat"><span class="eyebrow">Respondidas</span><b class="mono">${s.r}</b><small>de ${s.n} questões do banco</small><div class="bar"><i style="width:${pct(s.r,s.n)}%"></i></div></div>
+    <div class="panel stat"><span class="eyebrow">Aproveitamento</span><b class="mono">${pct(s.ok,s.r)}%</b><small>${s.ok} acertos em ${s.r} respondidas</small><div class="bar"><i class="y" style="width:${pct(s.ok,s.r)}%"></i></div></div>
+    <div class="panel stat"><span class="eyebrow">Última prova</span><b class="mono">${ult?ult.pontos+'/90':'—'}</b><small>${ult?ult.acertos+' acertos · '+ult.data:'Nenhuma prova completa feita ainda'}</small></div>
+  </div>
+  <section class="sec"><header><h2>Onde estão os pontos</h2><span class="tag e">Específicos valem 60 de 90</span></header>
+    <p class="lead">Distribuição provável das 60 questões, multiplicada pelo peso. Os Gerais seguem o padrão das provas FCC de TRT em 2024 e 2025; a divisão dos Específicos é estimativa.</p>
+    <div class="panel pts">${pts.map(p=>`<div class="row"><span>${esc(D[p.d])}</span><span class="track"><i class="${p.w===2?'e':''}" style="width:${p.q*p.w/maxp*100}%"></i></span><span class="v">${p.q*p.w} pts · ${p.q} q</span></div>`).join('')}</div>
+  </section>
+  <section class="sec"><header><h2>Módulos</h2><a href="#trilha">Ver trilha completa</a></header>${modsHTML()}</section>
+  <p class="foot">As questões são inéditas, escritas no estilo da FCC a partir dos temas que a banca repete em TRTs. Não são cópias de provas anteriores. Seu progresso fica salvo só neste navegador.</p>`;
+}
+function modsHTML(){
+  return `<div class="mods">${ORDER.map(d=>{const s=stats(d);return `<a class="mod" href="#m-${d.toLowerCase()}"><span class="tag ${G.has(d)?'':'e'}">${G.has(d)?'Gerais · peso 1':'Específicos · peso 2'}</span><h3>${esc(D[d])}</h3><div class="bar"><i style="width:${pct(s.r,s.n)}%"></i></div><div class="meta"><span>${s.r}/${s.n} feitas</span><span>${s.r?pct(s.ok,s.r)+'% acertos':'não iniciado'}</span></div></a>`}).join('')}</div>`;
+}
+function vTrilha(){
+  view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">Trilha de estudo</p><h2>12 módulos, na ordem do edital</h2></div></header>
+  <p class="lead">Em cada módulo: o resumo do que a FCC mais cobra e o banco de questões com comentário. Comece pelos que mais valem: Direito Administrativo, Constitucional, Orçamento e Português.</p>${modsHTML()}</section>`;
+}
+
+// ---------- módulo ----------
+let practice=null;
+function vModulo(d,tab){
+  const s=stats(d);
+  const temas=[...new Set(byD[d].map(q=>q.t))];
+  view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">${G.has(d)?'Conhecimentos gerais · peso 1':'Conhecimentos específicos · peso 2'} · provável ${PROVA[d]} questões na prova</p><h1>${esc(D[d])}</h1></div>
+    <div class="mono" style="color:var(--muted)">${s.r}/${s.n} feitas · ${pct(s.ok,s.r)}% acertos</div></header>
+    <div class="tabs" role="tablist"><button id="tR" class="${tab!=='q'?'on':''}">Resumo</button><button id="tQ" class="${tab==='q'?'on':''}">Questões (${s.n})</button></div>
+    <div id="mbody"></div></section>`;
+  $('#tR').onclick=()=>{try{sessionStorage.setItem('tab-'+d,'r')}catch(e){};vModulo(d,'r')};
+  $('#tQ').onclick=()=>{try{sessionStorage.setItem('tab-'+d,'q')}catch(e){};vModulo(d,'q')};
+  if(tab!=='q'){
+    $('#mbody').innerHTML=`<div class="resumo">${RES[d]||''}</div><div><button class="btn n" id="goQ">Praticar ${s.n} questões</button></div>`;
+    $('#goQ').onclick=()=>$('#tQ').click(); return;
+  }
+  $('#mbody').innerHTML=`<div class="qtools"><label for="fTema" class="chk">Tema</label><select id="fTema"><option value="">Todos os temas</option>${temas.map(t=>`<option>${esc(t)}</option>`).join('')}</select>
+    <label class="chk"><input type="checkbox" id="fNova"> Só as não respondidas</label><label class="chk"><input type="checkbox" id="fMix"> Embaralhar</label></div><div id="qarea"></div>`;
+  const run=()=>{let L=byD[d].filter(q=>!$('#fTema').value||q.t===$('#fTema').value);
+    if($('#fNova').checked)L=L.filter(q=>!prog[q.id]);
+    if($('#fMix').checked)L=shuffle(L);
+    practice={list:L.map(q=>q.id),i:0,sel:null,done:false}; drawPractice();};
+  ['fTema','fNova','fMix'].forEach(id=>$('#'+id).onchange=run); run();
+}
+function qBlock(q,{sel,reveal,num,total}){
+  const ctx=q.x!=null?`<details class="texto" open><summary>Texto de apoio</summary>${esc(B.textos[q.x])}</details>`:'';
+  const opts=q.o.map((o,i)=>{let c='';if(reveal){if(i===q.a)c='ok';else if(i===sel)c='bad'}else if(i===sel)c='sel';
+    return `<button class="opt ${c}" data-i="${i}" ${reveal?'disabled':''}><b>${LET[i]}</b><span>${esc(o)}</span></button>`}).join('');
+  return `<div class="qcard"><div class="qhead"><span class="mono">Questão ${num} de ${total}</span><span class="tag">${esc(q.t)}</span></div>${ctx}<p class="enun">${esc(q.q)}</p><div class="opts">${opts}</div><div id="fbx"></div></div>`;
+}
+function drawPractice(){
+  const a=$('#qarea'); if(!a)return; const P=practice;
+  if(!P.list.length){a.innerHTML=`<p class="empty">Nenhuma questão com esses filtros. Desmarque "Só as não respondidas" ou escolha outro tema.</p>`;return}
+  const q=byId[P.list[P.i]];
+  a.innerHTML=qBlock(q,{sel:P.sel,reveal:P.done,num:P.i+1,total:P.list.length})+
+   `<div class="qnav"><button class="btn g" id="pPrev" ${P.i===0?'disabled':''}>Anterior</button>
+    ${P.done?`<button class="btn n" id="pNext">${P.i<P.list.length-1?'Próxima questão':'Concluir'}</button>`:`<button class="btn y" id="pOk" ${P.sel==null?'disabled':''}>Responder</button>`}</div>`;
+  a.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{P.sel=+b.dataset.i;drawPractice()});
+  if(P.done){const ok=P.sel===q.a;$('#fbx').innerHTML=`<div class="fb ${ok?'ok':'bad'}"><strong>${ok?'Correta.':'Incorreta. Gabarito: '+LET[q.a]}</strong><p>${esc(q.e)}</p></div>`}
+  const pk=$('#pOk'); if(pk)pk.onclick=()=>{P.done=true;prog[q.id]={r:P.sel,ok:P.sel===q.a};save('trt4-prog',prog);drawPractice();renderNav(location.hash.slice(1))};
+  const pn=$('#pNext'); if(pn)pn.onclick=()=>{if(P.i<P.list.length-1){P.i++;P.sel=null;P.done=false;drawPractice();a.scrollIntoView({block:'start'})}else{location.hash='#trilha'}};
+  $('#pPrev').onclick=()=>{P.i--;const pq=byId[P.list[P.i]];const pr=prog[pq.id];P.sel=pr?pr.r:null;P.done=!!pr;drawPractice()};
+}
+
+// ---------- prova completa ----------
+let tick=null;
+function newExam(){
+  const ids=[];
+  ORDER.forEach(d=>{let pool=byD[d];
+    const fresh=shuffle(pool.filter(q=>q.x==null));
+    ids.push(...fresh.slice(0,PROVA[d]).map(q=>q.id))});
+  return {ids,ans:{},i:0,start:Date.now(),dur:4*3600*1000,fim:null};
+}
+function vProva(){
+  clearInterval(tick);
+  if(exam&&exam.fim){return vResultado(exam)}
+  if(!exam){
+    view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">Modo prova</p><h1>Prova completa no formato do edital</h1></div></header>
+    <div class="grid g2"><div class="panel"><h3>Como funciona</h3><ul class="resumo" style="padding-left:1.2em;margin:0"><li>60 questões sorteadas do banco: 30 gerais e 30 específicas.</li><li>Cronômetro de 4 horas, o mesmo tempo da prova real com a redação. Reserve 1h para a redação: tente terminar as 60 em 3h.</li><li>Gabarito e nota só no final. Gerais valem 1 ponto; específicas, 2. Total: 90 pontos.</li></ul></div>
+    <div class="panel"><h3>Distribuição</h3><div class="tw"><table><tr><th>Matéria</th><th>Questões</th></tr>${ORDER.map(d=>`<tr><td>${esc(D[d])}</td><td class="n">${PROVA[d]}</td></tr>`).join('')}</table></div></div></div>
+    <div><button class="btn y" id="startEx">Iniciar prova</button></div>
+    ${hist.length?`<section class="sec"><h2>Provas anteriores</h2><div class="tw"><table><tr><th>Data</th><th>Acertos</th><th>Pontos</th></tr>${hist.slice().reverse().map(h=>`<tr><td>${esc(h.data)}</td><td class="n">${h.acertos}/60</td><td class="n">${h.pontos}/90</td></tr>`).join('')}</table></div></section>`:''}</section>`;
+    $('#startEx').onclick=()=>{exam=newExam();save('trt4-exam',exam);vProva()}; return;
+  }
+  drawExam(); tick=setInterval(()=>{const t=$('#timer');if(!t){clearInterval(tick);return}t.textContent=fmtLeft()},1000);
+}
+function fmtLeft(){const ms=Math.max(0,exam.start+exam.dur-Date.now());const h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000);return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+function drawExam(){
+  const q=byId[exam.ids[exam.i]];const n=Object.keys(exam.ans).length;
+  view.innerHTML=`<div class="examhead"><span class="timer" id="timer">${fmtLeft()}</span><span class="mono">${n}/60 marcadas</span><button class="btn n" id="entregar">Entregar prova</button></div>
+  <div id="conf"></div>
+  ${qBlock(q,{sel:exam.ans[exam.i],reveal:false,num:exam.i+1,total:60})}
+  <div class="qnav"><button class="btn g" id="ePrev" ${exam.i===0?'disabled':''}>Anterior</button><button class="btn g" id="eNext" ${exam.i===59?'disabled':''}>Próxima</button></div>
+  <div class="panel"><span class="eyebrow">Folha de respostas</span><div class="sheet">${exam.ids.map((id,i)=>`<button data-j="${i}" class="${exam.ans[i]!=null?'done':''} ${i===exam.i?'cur':''}">${i+1}</button>`).join('')}</div></div>`;
+  view.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{exam.ans[exam.i]=+b.dataset.i;save('trt4-exam',exam);drawExam()});
+  view.querySelectorAll('.sheet button').forEach(b=>b.onclick=()=>{exam.i=+b.dataset.j;save('trt4-exam',exam);drawExam()});
+  $('#ePrev').onclick=()=>{exam.i--;drawExam()};$('#eNext').onclick=()=>{exam.i++;drawExam()};
+  $('#entregar').onclick=()=>{const falt=60-Object.keys(exam.ans).length;
+    $('#conf').innerHTML=`<div class="tip" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><span>${falt?`Faltam ${falt} questões sem marcar. Na FCC não há desconto por erro.`:'Todas marcadas.'} Entregar agora?</span><button class="btn n" id="sim">Entregar</button><button class="btn g" id="nao">Continuar</button></div>`;
+    $('#sim').onclick=finishExam;$('#nao').onclick=()=>$('#conf').innerHTML=''};
+}
+function finishExam(){
+  clearInterval(tick); exam.fim=Date.now();
+  let ac=0,pts=0;const por={};
+  exam.ids.forEach((id,i)=>{const q=byId[id];const ok=exam.ans[i]===q.a;por[q.d]=por[q.d]||{n:0,ok:0};por[q.d].n++;if(ok){por[q.d].ok++;ac++;pts+=G.has(q.d)?1:2}
+    if(exam.ans[i]!=null){prog[id]={r:exam.ans[i],ok}}});
+  save('trt4-prog',prog);
+  exam.res={ac,pts,por}; hist.push({data:new Date().toLocaleDateString('pt-BR'),acertos:ac,pontos:pts}); save('trt4-provas',hist); save('trt4-exam',exam);
+  vResultado(exam); renderNav('prova');
+}
+function vResultado(ex){
+  const r=ex.res;const tempo=Math.round((ex.fim-ex.start)/60000);
+  view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">Resultado</p><h1>${r.pts} de 90 pontos</h1></div><button class="btn y" id="nova">Nova prova</button></header>
+  <div class="grid g3"><div class="panel stat"><span class="eyebrow">Acertos</span><b class="mono">${r.ac}/60</b></div><div class="panel stat"><span class="eyebrow">Aproveitamento</span><b class="mono">${pct(r.pts,90)}%</b><small>dos pontos possíveis</small></div><div class="panel stat"><span class="eyebrow">Tempo</span><b class="mono">${Math.floor(tempo/60)}h${String(tempo%60).padStart(2,'0')}</b></div></div>
+  <div class="panel"><div class="tw"><table><tr><th>Matéria</th><th>Acertos</th><th>Pontos</th></tr>${ORDER.filter(d=>r.por[d]).map(d=>{const p=r.por[d];return `<tr><td>${esc(D[d])}</td><td class="n">${p.ok}/${p.n}</td><td class="n">${p.ok*(G.has(d)?1:2)}</td></tr>`}).join('')}</table></div></div>
+  <h2>Correção</h2><div class="sheet">${ex.ids.map((id,i)=>`<button data-j="${i}" class="${ex.ans[i]===byId[id].a?'ok':'bad'}">${i+1}</button>`).join('')}</div><div id="rev"></div></section>`;
+  $('#nova').onclick=()=>{exam=null;save('trt4-exam',null);vProva()};
+  const show=i=>{const q=byId[ex.ids[i]];$('#rev').innerHTML=qBlock(q,{sel:ex.ans[i],reveal:true,num:i+1,total:60});const ok=ex.ans[i]===q.a;
+    $('#fbx').innerHTML=`<div class="fb ${ok?'ok':'bad'}"><strong>${ok?'Correta.':(ex.ans[i]==null?'Em branco. ':'Incorreta. ')+'Gabarito: '+LET[q.a]}</strong><p>${esc(q.e)}</p></div>`};
+  view.querySelectorAll('.sheet button').forEach(b=>b.onclick=()=>show(+b.dataset.j)); show(0);
+}
+
+// ---------- erros ----------
+function vErros(){
+  const ids=Object.keys(prog).filter(id=>!prog[id].ok&&byId[id]);
+  view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">Revisão</p><h1>Questões que você errou</h1></div><span class="mono">${ids.length}</span></header>
+  <p class="lead">Errar e revisar é o que mais faz a nota subir. Ao acertar aqui, a questão sai da lista.</p><div id="qarea"></div></section>`;
+  if(!ids.length){$('#qarea').innerHTML=`<p class="empty">Nenhum erro registrado ainda. Faça questões na trilha ou uma prova completa.</p>`;return}
+  practice={list:ids,i:0,sel:null,done:false}; drawPractice();
+}
+
+// ---------- plano ----------
+function vPlano(){
+  view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">Estratégia</p><h1>Como a FCC cobra e como estudar até 31/01</h1></div></header>
+  <div class="panel"><h3>Estilo da banca</h3><div class="tw"><table><tr><th>Padrão</th><th>Como aparece</th><th>Como treinar</th></tr>
+  <tr><td>Letra da lei com troca de palavra</td><td>"15 dias" vira "30 dias"; "poderá" vira "deverá"</td><td>Ler a lei seca e marcar prazos, números e verbos</td></tr>
+  <tr><td>Assertivas I, II, III</td><td>"Está correto o que se afirma APENAS em"</td><td>Julgar cada assertiva sozinha antes das alternativas</td></tr>
+  <tr><td>Caso prático curto</td><td>Servidor, empresa ou empregado em situação concreta</td><td>Identificar o instituto antes de ler as opções</td></tr>
+  <tr><td>Texto longo em Português</td><td>Interpretação, reescrita, conectivos</td><td>Ler o comando primeiro e voltar ao texto</td></tr>
+  <tr><td>Súmulas do TST</td><td>Trabalho e Processo cobram o texto da súmula</td><td>Estudar as súmulas por tema</td></tr></table></div></div>
+  <div class="panel"><h3>Plano de 12 semanas</h3><div class="tw"><table><tr><th>Semanas</th><th>Foco</th><th>Questões por dia</th></tr>
+  <tr><td class="n">1–3</td><td>Direito Administrativo e Português</td><td class="n">40</td></tr>
+  <tr><td class="n">4–5</td><td>Constitucional e Orçamento</td><td class="n">30</td></tr>
+  <tr><td class="n">6–7</td><td>Gestão de Pessoas, Administração, Trabalho e Processo do Trabalho</td><td class="n">30</td></tr>
+  <tr><td class="n">8–9</td><td>Legislação do TRT4, Direitos Humanos, Informática, Matemática</td><td class="n">30</td></tr>
+  <tr><td class="n">10–11</td><td>Uma prova completa a cada 2 ou 3 dias</td><td class="n">60</td></tr>
+  <tr><td class="n">12</td><td>Só a lista de erros e descanso</td><td class="n">—</td></tr></table></div></div>
+  <div class="grid g2"><div class="panel"><h3>Redação (peso 4)</h3><p>Dissertativo-argumentativa, 20 a 30 linhas. Tema vale 7,0 e norma-padrão 3,0; mínimo 6,0 para não ser eliminado. Estrutura que resolve: introdução com tese, dois parágrafos de argumento, conclusão. Escreva uma por semana e peça para alguém corrigir.</p></div>
+  <div class="panel"><h3>Regras de prova</h3><p>Não há desconto por erro: nunca deixe em branco. Comece pelos Específicos, que valem o dobro. Deixe a redação para depois de marcar a folha, com pelo menos 1 hora livre.</p></div></div>
+  <p class="foot">Fontes: edital TRT4 2026 (FCC) e provas oficiais FCC de TRT de 2022 a 2025. Leia o Regimento Interno e o Código de Conduta do TRT4 na íntegra no site do tribunal.</p></section>`;
+}
+
+// ---------- roteador ----------
+function route(){
+  clearInterval(tick);
+  const h=(location.hash||'#inicio').slice(1); renderNav(h);
+  $('#side').classList.remove('open'); $('#menuBtn').setAttribute('aria-expanded','false');
+  if(h==='trilha')vTrilha(); else if(h==='prova')vProva(); else if(h==='erros')vErros(); else if(h==='plano')vPlano();
+  else if(h.startsWith('m-')&&byD[h.slice(2).toUpperCase()]){const d=h.slice(2).toUpperCase();let t='r';try{t=sessionStorage.getItem('tab-'+d)||'r'}catch(e){};vModulo(d,t)}
+  else vInicio();
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+$('#menuBtn').onclick=()=>{const o=$('#side').classList.toggle('open');$('#menuBtn').setAttribute('aria-expanded',o)};
+// tema
+const themes=['auto','light','dark'];let th=load('trt4-tema','auto');
+function applyTheme(){if(th==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',th);$('#themeBtn').textContent='Tema: '+({auto:'automático',light:'claro',dark:'escuro'}[th])}
+$('#themeBtn').onclick=()=>{th=themes[(themes.indexOf(th)+1)%3];save('trt4-tema',th);applyTheme()};
+applyTheme(); route();
+})();
+</script>
+
+</body>
+</html>
