@@ -180,6 +180,7 @@ textarea{width:100%;font-family:var(--mono);font-size:.8rem}
 .pill .pk.decore{background:var(--navy);color:var(--navy-ink)}
 .pill .pk.macete{background:var(--mark);color:var(--mark-ink)}
 .pill .pk.pegadinha{background:var(--bad-soft);color:var(--bad)}
+.pill .ps{display:block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:.55rem 0 -.2rem}
 .pill .pf{font-size:.78rem;color:var(--muted,#667);margin-top:.4rem;font-style:italic}
 .pill h4{margin:0;font-family:var(--display);font-size:1.02rem;line-height:1.25}
 .pill p{font-size:.93rem;color:var(--ink)}
@@ -338,7 +339,7 @@ const view = $('#view');
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 const PL=window.PILULAS||{};
 function pkClass(k){return k.startsWith('Peg')?'pegadinha':(k==='Macete'?'macete':'decore')}
-function pillHTML(p,d,cls){return `<article class="pill ${cls||''}"><span class="pk ${pkClass(p.k)}">${esc(p.k)}</span><h4>${esc(p.t)}</h4><p>${esc(p.x)}</p>${p.f?`<p class="pf">Caiu em: ${esc(p.f)}</p>`:''}${d?`<span class="pd">${esc(D[d])}</span>`:''}</article>`}
+function pillHTML(p,d,cls){return `<article class="pill ${cls||''}"><span class="pk ${pkClass(p.k)}">${esc(p.k)}</span>${p.s?`<span class="ps">${esc(p.s)}</span>`:''}<h4>${esc(p.t)}</h4><p>${esc(p.x)}</p>${p.f?`<p class="pf">Caiu em: ${esc(p.f)}</p>`:''}${d?`<span class="pd">${esc(D[d])}</span>`:''}</article>`}
 const ALLP=[];ORDER.forEach(d=>(PL[d]||[]).forEach(p=>ALLP.push({p,d})));
 const STOP=new Set('sobre entre quando segundo conforme sempre outros outras todos todas pela pelo pelos pelas para como mais menos desde ainda dentro após antes deve devem podem pode será serão sendo tendo cada essa esse esta este isso isto aquela aquele qual quais caso casos lei leis regra regras forma prazo prazos'.split(' '));
 function words(t){return new Set((t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').split(/[^a-z0-9]+/).filter(w=>w.length>4&&!STOP.has(w)))}
@@ -395,7 +396,7 @@ function pilModsHTML(){
 }
 function vPilIndex(){
   view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">Revisão rápida</p><h1>Pílulas por matéria</h1></div><span class="mono">${ALLP.length.toLocaleString('pt-BR')}</span></header>
-  <p class="lead">Escolha a matéria. Dentro dela, as pílulas estão agrupadas por assunto e podem ser filtradas por tipo: <b>Decore</b> (prazos e números), <b>Macete</b> (atalhos para lembrar) e <b>Pegadinha FCC</b> (armadilha que já caiu em prova real da FCC para TRT, com a prova citada).</p>${pilModsHTML()}</section>`;
+  <p class="lead">Escolha a matéria. Dentro dela, as pílulas estão agrupadas por assunto e podem ser filtradas por tipo: <b>Regra</b> (o que a lei ou a gramática diz), <b>Macete</b> (atalhos para lembrar) e <b>Pegadinha FCC</b> (armadilha que já caiu em prova real da FCC para TRT, com a prova citada).</p>${pilModsHTML()}</section>`;
 }
 function modsHTML(){
   return `<div class="mods">${ORDER.map(d=>{const s=stats(d);return `<a class="mod" href="#m-${d.toLowerCase()}"><span class="tag ${G.has(d)?'':'e'}">${G.has(d)?'Gerais · peso 1':'Específicos · peso 2'}</span><h3>${esc(D[d])}</h3><div class="bar"><i style="width:${pct(s.r,s.n)}%"></i></div><div class="meta"><span>${s.r}/${s.n} feitas · ${(PL[d]||[]).length} pílulas</span><span>${s.r?pct(s.ok,s.r)+'% acertos':'não iniciado'}</span></div></a>`}).join('')}</div>`;
@@ -411,7 +412,7 @@ function drawPilTab(d,s){
   const L=PL[d]||[];const subs=[...new Set(L.map(p=>p.s))];
   const f=pilF[d]=pilF[d]||{sub:'',k:'',q:''};
   $('#mbody').innerHTML=`<div class="qtools"><label for="pSub" class="chk">Assunto</label><select id="pSub"><option value="">Todos os assuntos (${subs.length})</option>${subs.map(x=>`<option ${f.sub===x?'selected':''}>${esc(x)}</option>`).join('')}</select>
-    <div class="chips" role="group" aria-label="Tipo">${[['','Todas'],['Decore','Decore'],['Macete','Macete'],['Pegadinha FCC','Pegadinhas']].map(([v,l])=>`<button class="chip ${f.k===v?'on':''}" data-k="${v}">${l}</button>`).join('')}</div>
+    <div class="chips" role="group" aria-label="Tipo">${[['','Todas'],['Regra','Regras'],['Macete','Macete'],['Pegadinha FCC','Pegadinhas']].map(([v,l])=>`<button class="chip ${f.k===v?'on':''}" data-k="${v}">${l}</button>`).join('')}</div>
     <input id="pBusca" type="search" placeholder="Buscar nas pílulas" value="${esc(f.q)}"></div><p class="mono" id="pCount" style="color:var(--muted)"></p><div id="pList"></div>
     <div><button class="btn n" id="goQ">Testar com ${s.n} questões</button></div>`;
   const draw=()=>{const q=f.q.trim().toLowerCase();const F=L.filter(p=>(!f.sub||p.s===f.sub)&&(!f.k||p.k===f.k)&&(!q||(p.t+' '+p.x+' '+p.s).toLowerCase().includes(q)));
