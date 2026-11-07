@@ -1,6 +1,6 @@
 # Trilha TRT4 2026 — site estático
 
-Arquivos: `index.html` (o site) e `questoes.js` (banco de 1.010 questões).
+Arquivos: `index.html` (o site), `questoes.js` (1.010 questões) e `pilulas.js` (148 pílulas de conhecimento).
 
 ## Publicar no Vercel
 1. Crie uma conta em vercel.com.

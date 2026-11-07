@@ -159,6 +159,19 @@ td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowra
 .foot{color:var(--muted);font-size:.85rem;max-width:75ch}
 .themebtn{margin-top:auto;background:var(--surface-2);border:0;color:var(--ink);border-radius:8px;padding:8px 10px;font-size:.85rem;text-align:left}
 
+/* pílulas */
+.pills{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.pill{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;position:relative;min-width:0}
+.pill .pk{align-self:flex-start;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px}
+.pill .pk.decore{background:var(--navy);color:var(--navy-ink)}
+.pill .pk.macete{background:var(--mark);color:var(--mark-ink)}
+.pill .pk.pegadinha{background:var(--bad-soft);color:var(--bad)}
+.pill h4{margin:0;font-family:var(--display);font-size:1.02rem;line-height:1.25}
+.pill p{font-size:.93rem;color:var(--ink)}
+.pill .pd{font-size:.75rem;color:var(--muted);font-weight:600}
+.pill.hero-pill{border:0;background:var(--mark-soft)}
+.pill.inline{border-style:dashed;background:var(--bg)}
+.pillhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 @media (max-width:860px){
   .app{grid-template-columns:minmax(0,1fr)}
   .side{display:none}
@@ -188,6 +201,7 @@ td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowra
 </div>
 
 <script src="questoes.js"></script>
+<script src="pilulas.js"></script>
 <script>
 (function(){
 const B = window.BANCO || {disciplinas:{},questoes:[],textos:[],gerais:[]};
@@ -249,6 +263,14 @@ DPT:`<p class="tip">Prazos, audiência e recursos. Grave a tabela dos prazos: 8 
 const $ = s=>document.querySelector(s);
 const view = $('#view');
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+const PL=window.PILULAS||{};
+function pkClass(k){return k.startsWith('Peg')?'pegadinha':(k==='Macete'?'macete':'decore')}
+function pillHTML(p,d,cls){return `<article class="pill ${cls||''}"><span class="pk ${pkClass(p.k)}">${esc(p.k)}</span><h4>${esc(p.t)}</h4><p>${esc(p.x)}</p>${d?`<span class="pd">${esc(D[d])}</span>`:''}</article>`}
+const ALLP=[];ORDER.forEach(d=>(PL[d]||[]).forEach(p=>ALLP.push({p,d})));
+function pillFor(q){const L=PL[q.d]||[];if(!L.length)return null;const hay=(q.t+' '+q.q).toLowerCase();
+  const m=L.filter(p=>(p.g||[]).some(g=>hay.includes(g.toLowerCase())));const pool=m.length?m:L;
+  let h=0;for(const c of q.id)h=(h*31+c.charCodeAt(0))%9973;return {p:pool[h%pool.length],match:m.length>0}}
+function pillAfter(q){const r=pillFor(q);if(!r)return '';return `<div style="display:flex;flex-direction:column;gap:6px;margin-top:10px"><span class="eyebrow">${r.match?'Pílula deste assunto':'Revise também'}</span>${pillHTML(r.p,null,'inline')}</div>`}
 function stats(d){const L=d?byD[d]:Q;let r=0,ok=0;L.forEach(q=>{const p=prog[q.id];if(p){r++;if(p.ok)ok++}});return {n:L.length,r,ok}}
 function pct(a,b){return b?Math.round(a/b*100):0}
 function shuffle(a,seed){const r=[...a];let s=seed||Date.now();for(let i=r.length-1;i>0;i--){s=(s*9301+49297)%233280;const j=Math.floor(s/233280*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
@@ -282,15 +304,18 @@ function vInicio(){
     <div class="panel stat"><span class="eyebrow">Aproveitamento</span><b class="mono">${pct(s.ok,s.r)}%</b><small>${s.ok} acertos em ${s.r} respondidas</small><div class="bar"><i class="y" style="width:${pct(s.ok,s.r)}%"></i></div></div>
     <div class="panel stat"><span class="eyebrow">Última prova</span><b class="mono">${ult?ult.pontos+'/90':'—'}</b><small>${ult?ult.acertos+' acertos · '+ult.data:'Nenhuma prova completa feita ainda'}</small></div>
   </div>
+  <section class="sec"><header><h2>Pílula do dia</h2><button class="btn g" id="outraP">Outra pílula</button></header><div id="pdia"></div></section>
   <section class="sec"><header><h2>Onde estão os pontos</h2><span class="tag e">Específicos valem 60 de 90</span></header>
     <p class="lead">Distribuição provável das 60 questões, multiplicada pelo peso. Os Gerais seguem o padrão das provas FCC de TRT em 2024 e 2025; a divisão dos Específicos é estimativa.</p>
     <div class="panel pts">${pts.map(p=>`<div class="row"><span>${esc(D[p.d])}</span><span class="track"><i class="${p.w===2?'e':''}" style="width:${p.q*p.w/maxp*100}%"></i></span><span class="v">${p.q*p.w} pts · ${p.q} q</span></div>`).join('')}</div>
   </section>
   <section class="sec"><header><h2>Módulos</h2><a href="#trilha">Ver trilha completa</a></header>${modsHTML()}</section>
   <p class="foot">As questões são inéditas, escritas no estilo da FCC a partir dos temas que a banca repete em TRTs. Não são cópias de provas anteriores. Seu progresso fica salvo só neste navegador.</p>`;
+  if(ALLP.length){let k=Math.floor(Date.now()/86400000)%ALLP.length;const show=()=>{const it=ALLP[k];$('#pdia').innerHTML=pillHTML(it.p,it.d,'hero-pill')};show();
+    $('#outraP').onclick=()=>{k=(k+1+Math.floor(Math.random()*(ALLP.length-1)))%ALLP.length;show()}}
 }
 function modsHTML(){
-  return `<div class="mods">${ORDER.map(d=>{const s=stats(d);return `<a class="mod" href="#m-${d.toLowerCase()}"><span class="tag ${G.has(d)?'':'e'}">${G.has(d)?'Gerais · peso 1':'Específicos · peso 2'}</span><h3>${esc(D[d])}</h3><div class="bar"><i style="width:${pct(s.r,s.n)}%"></i></div><div class="meta"><span>${s.r}/${s.n} feitas</span><span>${s.r?pct(s.ok,s.r)+'% acertos':'não iniciado'}</span></div></a>`}).join('')}</div>`;
+  return `<div class="mods">${ORDER.map(d=>{const s=stats(d);return `<a class="mod" href="#m-${d.toLowerCase()}"><span class="tag ${G.has(d)?'':'e'}">${G.has(d)?'Gerais · peso 1':'Específicos · peso 2'}</span><h3>${esc(D[d])}</h3><div class="bar"><i style="width:${pct(s.r,s.n)}%"></i></div><div class="meta"><span>${s.r}/${s.n} feitas · ${(PL[d]||[]).length} pílulas</span><span>${s.r?pct(s.ok,s.r)+'% acertos':'não iniciado'}</span></div></a>`}).join('')}</div>`;
 }
 function vTrilha(){
   view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">Trilha de estudo</p><h2>12 módulos, na ordem do edital</h2></div></header>
@@ -304,13 +329,20 @@ function vModulo(d,tab){
   const temas=[...new Set(byD[d].map(q=>q.t))];
   view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">${G.has(d)?'Conhecimentos gerais · peso 1':'Conhecimentos específicos · peso 2'} · provável ${PROVA[d]} questões na prova</p><h1>${esc(D[d])}</h1></div>
     <div class="mono" style="color:var(--muted)">${s.r}/${s.n} feitas · ${pct(s.ok,s.r)}% acertos</div></header>
-    <div class="tabs" role="tablist"><button id="tR" class="${tab!=='q'?'on':''}">Resumo</button><button id="tQ" class="${tab==='q'?'on':''}">Questões (${s.n})</button></div>
+    <div class="tabs" role="tablist"><button id="tR" class="${tab==='r'||!tab?'on':''}">Resumo</button><button id="tP" class="${tab==='p'?'on':''}">Pílulas (${(PL[d]||[]).length})</button><button id="tQ" class="${tab==='q'?'on':''}">Questões (${s.n})</button></div>
     <div id="mbody"></div></section>`;
   $('#tR').onclick=()=>{try{sessionStorage.setItem('tab-'+d,'r')}catch(e){};vModulo(d,'r')};
   $('#tQ').onclick=()=>{try{sessionStorage.setItem('tab-'+d,'q')}catch(e){};vModulo(d,'q')};
-  if(tab!=='q'){
-    $('#mbody').innerHTML=`<div class="resumo">${RES[d]||''}</div><div><button class="btn n" id="goQ">Praticar ${s.n} questões</button></div>`;
+  $('#tP').onclick=()=>{try{sessionStorage.setItem('tab-'+d,'p')}catch(e){};vModulo(d,'p')};
+  const PLd=PL[d]||[];
+  if(tab==='p'){
+    $('#mbody').innerHTML=`<p class="lead">Cápsulas para revisar em 1 minuto: o que decorar, os macetes e as pegadinhas que a FCC usa nesta matéria.</p><div class="pills">${PLd.map(p=>pillHTML(p)).join('')}</div><div><button class="btn n" id="goQ">Testar com ${s.n} questões</button></div>`;
     $('#goQ').onclick=()=>$('#tQ').click(); return;
+  }
+  if(tab!=='q'){
+    const prev=PLd.filter(p=>p.k.startsWith('Peg')).slice(0,3);
+    $('#mbody').innerHTML=`<div class="resumo">${RES[d]||''}</div>${prev.length?`<section class="sec"><div class="pillhead"><h3>Pegadinhas da FCC nesta matéria</h3><button class="btn g" id="goP">Ver as ${PLd.length} pílulas</button></div><div class="pills">${prev.map(p=>pillHTML(p)).join('')}</div></section>`:''}<div><button class="btn n" id="goQ">Praticar ${s.n} questões</button></div>`;
+    $('#goQ').onclick=()=>$('#tQ').click(); const gp=$('#goP'); if(gp)gp.onclick=()=>$('#tP').click(); return;
   }
   $('#mbody').innerHTML=`<div class="qtools"><label for="fTema" class="chk">Tema</label><select id="fTema"><option value="">Todos os temas</option>${temas.map(t=>`<option>${esc(t)}</option>`).join('')}</select>
     <label class="chk"><input type="checkbox" id="fNova"> Só as não respondidas</label><label class="chk"><input type="checkbox" id="fMix"> Embaralhar</label></div><div id="qarea"></div>`;
@@ -334,7 +366,7 @@ function drawPractice(){
    `<div class="qnav"><button class="btn g" id="pPrev" ${P.i===0?'disabled':''}>Anterior</button>
     ${P.done?`<button class="btn n" id="pNext">${P.i<P.list.length-1?'Próxima questão':'Concluir'}</button>`:`<button class="btn y" id="pOk" ${P.sel==null?'disabled':''}>Responder</button>`}</div>`;
   a.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{P.sel=+b.dataset.i;drawPractice()});
-  if(P.done){const ok=P.sel===q.a;$('#fbx').innerHTML=`<div class="fb ${ok?'ok':'bad'}"><strong>${ok?'Correta.':'Incorreta. Gabarito: '+LET[q.a]}</strong><p>${esc(q.e)}</p></div>`}
+  if(P.done){const ok=P.sel===q.a;$('#fbx').innerHTML=`<div class="fb ${ok?'ok':'bad'}"><strong>${ok?'Correta.':'Incorreta. Gabarito: '+LET[q.a]}</strong><p>${esc(q.e)}</p></div>${pillAfter(q)}`}
   const pk=$('#pOk'); if(pk)pk.onclick=()=>{P.done=true;prog[q.id]={r:P.sel,ok:P.sel===q.a};save('trt4-prog',prog);drawPractice();renderNav(location.hash.slice(1))};
   const pn=$('#pNext'); if(pn)pn.onclick=()=>{if(P.i<P.list.length-1){P.i++;P.sel=null;P.done=false;drawPractice();a.scrollIntoView({block:'start'})}else{location.hash='#trilha'}};
   $('#pPrev').onclick=()=>{P.i--;const pq=byId[P.list[P.i]];const pr=prog[pq.id];P.sel=pr?pr.r:null;P.done=!!pr;drawPractice()};
@@ -391,10 +423,11 @@ function vResultado(ex){
   view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">Resultado</p><h1>${r.pts} de 90 pontos</h1></div><button class="btn y" id="nova">Nova prova</button></header>
   <div class="grid g3"><div class="panel stat"><span class="eyebrow">Acertos</span><b class="mono">${r.ac}/60</b></div><div class="panel stat"><span class="eyebrow">Aproveitamento</span><b class="mono">${pct(r.pts,90)}%</b><small>dos pontos possíveis</small></div><div class="panel stat"><span class="eyebrow">Tempo</span><b class="mono">${Math.floor(tempo/60)}h${String(tempo%60).padStart(2,'0')}</b></div></div>
   <div class="panel"><div class="tw"><table><tr><th>Matéria</th><th>Acertos</th><th>Pontos</th></tr>${ORDER.filter(d=>r.por[d]).map(d=>{const p=r.por[d];return `<tr><td>${esc(D[d])}</td><td class="n">${p.ok}/${p.n}</td><td class="n">${p.ok*(G.has(d)?1:2)}</td></tr>`}).join('')}</table></div></div>
+  ${(()=>{const w=ORDER.filter(d=>r.por[d]).map(d=>({d,v:r.por[d].ok/r.por[d].n*(G.has(d)?1:2)})).sort((a,b)=>a.v-b.v)[0];if(!w||!(PL[w.d]||[]).length)return '';return `<section class="sec"><div class="pillhead"><h2>Pílulas para ${esc(D[w.d])}</h2><a href="#m-${w.d.toLowerCase()}">Ir para o módulo</a></div><p class="lead">Foi onde você perdeu mais pontos nesta prova.</p><div class="pills">${PL[w.d].slice(0,6).map(p=>pillHTML(p)).join('')}</div></section>`})()}
   <h2>Correção</h2><div class="sheet">${ex.ids.map((id,i)=>`<button data-j="${i}" class="${ex.ans[i]===byId[id].a?'ok':'bad'}">${i+1}</button>`).join('')}</div><div id="rev"></div></section>`;
   $('#nova').onclick=()=>{exam=null;save('trt4-exam',null);vProva()};
   const show=i=>{const q=byId[ex.ids[i]];$('#rev').innerHTML=qBlock(q,{sel:ex.ans[i],reveal:true,num:i+1,total:60});const ok=ex.ans[i]===q.a;
-    $('#fbx').innerHTML=`<div class="fb ${ok?'ok':'bad'}"><strong>${ok?'Correta.':(ex.ans[i]==null?'Em branco. ':'Incorreta. ')+'Gabarito: '+LET[q.a]}</strong><p>${esc(q.e)}</p></div>`};
+    $('#fbx').innerHTML=`<div class="fb ${ok?'ok':'bad'}"><strong>${ok?'Correta.':(ex.ans[i]==null?'Em branco. ':'Incorreta. ')+'Gabarito: '+LET[q.a]}</strong><p>${esc(q.e)}</p></div>${pillAfter(q)}`};
   view.querySelectorAll('.sheet button').forEach(b=>b.onclick=()=>show(+b.dataset.j)); show(0);
 }
 
@@ -402,7 +435,7 @@ function vResultado(ex){
 function vErros(){
   const ids=Object.keys(prog).filter(id=>!prog[id].ok&&byId[id]);
   view.innerHTML=`<section class="sec"><header><div><p class="eyebrow">Revisão</p><h1>Questões que você errou</h1></div><span class="mono">${ids.length}</span></header>
-  <p class="lead">Errar e revisar é o que mais faz a nota subir. Ao acertar aqui, a questão sai da lista.</p><div id="qarea"></div></section>`;
+  <p class="lead">Errar e revisar é o que mais faz a nota subir. Ao acertar aqui, a questão sai da lista. Depois de cada resposta aparece uma pílula do assunto.</p><div id="qarea"></div></section>`;
   if(!ids.length){$('#qarea').innerHTML=`<p class="empty">Nenhum erro registrado ainda. Faça questões na trilha ou uma prova completa.</p>`;return}
   practice={list:ids,i:0,sel:null,done:false}; drawPractice();
 }
@@ -425,6 +458,7 @@ function vPlano(){
   <tr><td class="n">12</td><td>Só a lista de erros e descanso</td><td class="n">—</td></tr></table></div></div>
   <div class="grid g2"><div class="panel"><h3>Redação (peso 4)</h3><p>Dissertativo-argumentativa, 20 a 30 linhas. Tema vale 7,0 e norma-padrão 3,0; mínimo 6,0 para não ser eliminado. Estrutura que resolve: introdução com tese, dois parágrafos de argumento, conclusão. Escreva uma por semana e peça para alguém corrigir.</p></div>
   <div class="panel"><h3>Regras de prova</h3><p>Não há desconto por erro: nunca deixe em branco. Comece pelos Específicos, que valem o dobro. Deixe a redação para depois de marcar a folha, com pelo menos 1 hora livre.</p></div></div>
+  <section class="sec"><h2>10 pegadinhas que a FCC mais repete</h2><div class="pills">${ALLP.filter(i=>i.p.k.startsWith('Peg')).filter((_,i)=>i%1===0).slice(0,40).filter((it,i,a)=>a.findIndex(z=>z.d===it.d)===i).concat([]).slice(0,10).map(i=>pillHTML(i.p,i.d)).join('')}</div></section>
   <p class="foot">Fontes: edital TRT4 2026 (FCC) e provas oficiais FCC de TRT de 2022 a 2025. Leia o Regimento Interno e o Código de Conduta do TRT4 na íntegra no site do tribunal.</p></section>`;
 }
 
